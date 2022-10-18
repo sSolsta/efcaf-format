@@ -91,4 +91,4 @@ This specification does not enforce the usage of certain keys, and you are encou
 At the end of the metadata (or last EFC chunk if metadata is not present), the minimum amount of null bytes are inserted to make the EFCAF file a multiple of 32 bytes long.
 
 ---
-*This format and specification were created by Daniella Kate ("sSolsta"), and are distributed under a Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/.*
+*This format and specification were created by Daniella Kate ("sSolsta"), and once properly released, will be distributed under a Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/.*
