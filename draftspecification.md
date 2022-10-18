@@ -75,7 +75,8 @@ The key is immediately followed by one or more values. If a key is followed by m
 | Unit Separator `0x1f` | This value is succeeded by another value. |
 | Record Separator `0x1f` | This value is succeeded by the next key. |
 | Null byte `0x00` | This is the end of the metadata section. |
-Unline keys, values are permitted to be empty strings.
+
+Unlike keys, values are permitted to be empty strings.
 
 This specification does not enforce the usage of certain keys, and you are encouraged to define your own. However, it suggests the use of the following basic keys:
 | Key | Meaning |
