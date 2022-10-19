@@ -52,7 +52,7 @@ for n in range(4):
   delta_byte = delta_byte >> 2
 ```
 ### Single chunk
-To decode a chunk `chunk`, you use the first byte directly as the first sample, and then decode the remaining `h_chunk_len` bytes as delta bytes:
+To decode a chunk `chunk`, you use the first byte directly as the first sample, and then decode the remaining `h_chunk_len - 1` bytes as delta bytes:
 ```py
 output.append(chunk[0])
 prev = chunk[0]
