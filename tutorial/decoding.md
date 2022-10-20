@@ -86,7 +86,6 @@ Each of these methods have their own advantages and disadvantages. You will also
 
 Below is an example of "chunk pair-wise" decoding:
 ```py
-# all pairs except the last
 for i in range(h_length - 1):
   if i == (h_length - 1):  # last pair
     chunk_len = min(h_chunk_len, h_final_chunk_len)
