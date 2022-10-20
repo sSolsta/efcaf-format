@@ -78,13 +78,13 @@ for i in range(h_length):
   output = output + decode_chunk(chunk, length = chunk_len)
 ```
 When decoding stereo data, you will need to account for the fact that it is stored in left-right chunk pairs. There are a few ways a decoder can do this:
-1) Decoding both channels simultaneously, that is, decoding one sample from the left channel, then one sample from the right, then the next sample from the left, then the next from the right, so on and so forth
-2) Decoding in terms of left-right chunk pairs, ie. decoding the left chunk, then decoding the right chunk, then interleaving the results from each
-3) Decoding the entire left channel, then decoding the entire right channel, then interleaving the results from each
+1) Decoding both channels simultaneously, that is, decoding one sample from the left channel, then one sample from the right, then the next sample from the left, then the next from the right, so on and so forth ("sample-wise" decoding)
+2) Decoding in terms of left-right chunk pairs, ie. decoding the left chunk, then decoding the right chunk, then interleaving the results from each ("chunk-wise" or "pair-wise" decoding)
+3) Decoding the entire left channel, then decoding the entire right channel, then interleaving the results from each ("channel-wise" decoding)
 
 Each of these methods have their own advantages and disadvantages. You will also need to account for the fact that both chunks in the final left-right chunk pair are of length `min(h_chunk_len, h_final_chunk_len)` instead of `h_chunk_len`.
 
-Below is an example of "chunk pair-wise" decoding:
+Below is an example of "chunk-wise" decoding:
 ```py
 for i in range(h_length - 1):
   if i == (h_length - 1):  # last pair
