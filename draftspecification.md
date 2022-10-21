@@ -77,11 +77,23 @@ The key is immediately followed by one or more values. If a key is followed by m
 | Null byte `0x00` | This is the end of the metadata section. |
 
 Unlike keys, values are permitted to be empty strings. An empty string would simply look like two terminator characters in a row:
-| Key  | Key Terminator | Value Terminator | Key  | Key Terminator | ...
-| --- | --- | --- | --- | --- | ---
-| key1 | Unit Sep. `0x1f` | Record Sep. `0x1e` | key2 | Unit Sep. `0x1f` | ...
-
-
+<table>
+  <tr>
+    <th colspan="2">Key</th>
+    <th colspan="2">Value</th>
+    <th colspan="2">Key</th>
+    <th>...</th>
+  </tr>
+  <tr>
+    <td>key1</td>
+    <td>\0x1f</td>
+    <td></td>
+    <td>\0x1e</td>
+    <td>key2</td>
+    <td>\0x1f</td>
+    <td>...</td>
+  </tr>
+</table>
 
 This specification does not enforce the usage of certain keys, and you are encouraged to define your own. However, it suggests the use of the following basic keys:
 | Key | Meaning |
