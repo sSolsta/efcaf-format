@@ -76,7 +76,12 @@ The key is immediately followed by one or more values. If a key is followed by m
 | Record Separator `0x1f` | This value is succeeded by the next key. |
 | Null byte `0x00` | This is the end of the metadata section. |
 
-Unlike keys, values are permitted to be empty strings.
+Unlike keys, values are permitted to be empty strings. An empty string would simply look like two terminator characters in a row:
+| Key  | Key Terminator | Value Terminator | Key  | Key Terminator | ...
+| --- | --- | --- | --- | --- | ---
+| key1 | Unit Sep. `0x1f` | Record Sep. `0x1e` | key2 | Unit Sep. `0x1f` | ...
+
+
 
 This specification does not enforce the usage of certain keys, and you are encouraged to define your own. However, it suggests the use of the following basic keys:
 | Key | Meaning |
