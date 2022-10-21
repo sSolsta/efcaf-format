@@ -3,9 +3,13 @@
 # Decoding EFCAF Files
 This tutorial uses code examples in the form of Python-like *pseudocode*. I will not be providing the code I have been using to encode/decode EFCAF files because it is, honesly, terrible to read through and hard to understand.
 ## Header
+The header is just the first 24 bytes of the EFCAF file:
+```py
+raw_header = efcaf_file[0:24]
+```
 Decoding the header is simple, it's just checking the first 6 bytes == `"EFCAF\x00"`, that the version byte is `1`, and then reading the values, offsetting and scaling them when needed
 
-The following pseudocode takes the raw 24-byte header `raw_header`, and retrieves the desired values (using Python-like indexing/slicing):
+The following pseudocode takes the raw 24-byte header and retrieves the desired values (using Python-like indexing/slicing):
 ```py
 # checking for EFCAF string and version (in real code you would not use assert statements, this is just an example)
 assert (raw_header[0:6] == "EFCAF\x00")
@@ -28,6 +32,14 @@ f_stereo = bool(flags & 0b0000_0010)
 f_signed = bool(flags & 0b0000_0001)
 ```
 ## EFC data
+The EFC data starts immediately after the header and ends at the end of the final chunk, and can be retrieved like so:
+```py
+if f_stereo:
+  efc_end = 24 + (2 * h_length - 1) * h_chunk_len + min(h_chunk_len, h_final_chunk_len)
+else:  # mono
+  efc_end = 24 + (h_length - 1) * h_chunk_len + min(h_chunk_len, h_final_chunk_len)
+efc_data = efcaf_file[24:efc_end]
+```
 ### Single delta sample
 To decode a single 2-bit delta sample `delta_smp`, you use it as an index into `h_lookup`, and then add/subtract it from the previous value `prev` (modulo 256) depending on `f_nmod2` and `n` (where `n` is the index of the sample in the delta byte):
 ```py
@@ -64,7 +76,7 @@ for delta_byte in chunk[1:h_chunk_len]:
 ```
 Decoding the final chunk(s) is identical, but using `min(h_chunk_len, h_final_chunk_len)` instead of `h_chunk_len`.
 ### Entire EFC data
-When decoding a mono EFC data stream `efc_data`, decoding the entire stream is as simple as decoding each chunk sequentially (making sure the last chunk uses `min(h_chunk_len, h_final_chunk_len)` instead of `h_chunk_len`):
+When decoding a mono EFC data stream, decoding the entire stream is as simple as decoding each chunk sequentially (making sure the last chunk uses `min(h_chunk_len, h_final_chunk_len)` instead of `h_chunk_len`):
 ```py
 for i in range(h_length):
   if i == (h_length - 1):  # last chunk
@@ -106,5 +118,23 @@ for i in range(h_length - 1):
   output = output + interleave_bytes(left_chunk, right_chunk)
 ```
 ## Metadata
-Metadata section soon<sup>TM</sup>
-
+If present (`f_meta` is set), metadata starts at `h_meta_offset` and ends at the first null byte afterwards
+```py
+if f_meta:
+  raw_metadata = efcaf_file[h_meta_offset:].split("\x00")[0]
+```
+Entries into the metadata dictionary are separated by Record Separators (`0x1e`), and the key and value(s) of an entry are separated by Unit Separators (`0x1f`). Keys are case-insensitive and cannot be empty, while values are case-sensitive and can be empty.
+```py
+metadata = {}
+# "split()" is assumed to return an empty string where there is no character between
+# the separator and the start/end of the string (or between a separator and the next separator)
+entries = raw_metadata.split("\x1e")  # record separator
+for entry in entries:
+  tokens = entry.split("\x1f")  # unit separator
+  k = tokens[0].to_lowercase()
+  v = tokens[1:]
+  
+  # keys cannot be empty, and there must be at least one value (but that value can be empty)
+  if length(k) > 0 and count(v) > 0:
+    metadata[k] = v
+```
